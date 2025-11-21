@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Oleg Shmarov - 3D Artist</title>
+
+    <link rel="icon" href="img/favicon.webp" type="image/svg+xml">
+    <link rel="stylesheet" href="css/project.css">
+
+    <!-- CRITICAL CSS -->
+    <script>
+        (function () {
+            const visited = sessionStorage.getItem('has_visited_site');
+            const html = document.documentElement;
+            if (visited) {
+                html.classList.add('is-visited');
+            } else {
+                html.classList.add('is-animating');
+                sessionStorage.setItem('has_visited_site', 'true');
+            }
+        })();
+    </script>
+</head>
+
+<body class="home">
+
+    <!-- HEADER -->
+    <header class="semplice-header">
+        <div class="smp-nav-row">
+            <div class="nav-logo">
+                <a href="./" class="image-link">
+                    <img src="img/logo.svg" alt="Logo">
+                </a>
+            </div>
+
+            <nav>
+                <ul>
+                    <li class="current-menu-item"><a href="./">Work</a></li>
+                    <li><a href="reel/">Reel</a></li>
+                    <li><a href="play/">Play</a></li>
+                    <li><a href="info/">About</a></li>
+                </ul>
+            </nav>
+
+            <button class="mobile-menu-btn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <ul>
+            <li><a href="./">Work</a></li>
+            <li><a href="reel/">Reel</a></li>
+            <li><a href="play/">Play</a></li>
+            <li><a href="info/">About</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main id="content-holder">
+        <div class="smp-container">
+
+            <!-- MASONRY GRID -->
+            <div class="masonry">
+
+                <!-- Card 1: ELF BAR -->
+                <div class="masonry-item">
+                    <a href="work/elfbar/" class="pg-link">
+                        <div class="thumb-inner">
+                            <div class="thumb-hover">
+                                <video playsinline loop muted preload="none">
+                                    <source src="vid/elf_preview.mp4" type="video/mp4">
+                                </video>
+                                <div class="thumb-hover-meta">
+                                    <span class="title">ELF BAR</span>
+                                    <span class="category">Commercial</span>
+                                </div>
+                            </div>
+                            <img src="img/preview1.png" alt="ELF BAR">
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Card 2: Football Dynamics -->
+                <div class="masonry-item">
+                    <a href="work/football-dynamics/" class="pg-link">
+                        <div class="thumb-inner">
+                            <div class="thumb-hover">
+                                <video playsinline loop muted preload="none">
+                                    <source src="https://vpolitov.com/wp-content/uploads/2025/02/FD_thumbnail_01.mp4"
+                                        type="video/mp4">
+                                </video>
+                                <div class="thumb-hover-meta">
+                                    <span class="title">Football Dynamics</span>
+                                    <span class="category">Personal</span>
+                                </div>
+                            </div>
+                            <img src="https://vpolitov.com/wp-content/uploads/2025/01/fd_thumbnail_01.png"
+                                alt="Football Dynamics">
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Card 3: Puma -->
+                <div class="masonry-item">
+                    <a href="work/puma-magmax/" class="pg-link">
+                        <div class="thumb-inner">
+                            <div class="thumb-hover">
+                                <video playsinline loop muted preload="none">
+                                    <source src="https://vpolitov.com/wp-content/uploads/2025/02/Puma_thumbnail_01.mp4"
+                                        type="video/mp4">
+                                </video>
+                                <div class="thumb-hover-meta">
+                                    <span class="title">Puma Running AW24</span>
+                                    <span class="category">Inertia Studios</span>
+                                </div>
+                            </div>
+                            <img src="https://vpolitov.com/wp-content/uploads/2025/01/magmax_thumbnail.png"
+                                alt="Puma MagMax">
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Card 4: Sber -->
+                <div class="masonry-item">
+                    <a href="work/sber-creative-frame/" class="pg-link">
+                        <div class="thumb-inner">
+                            <div class="thumb-hover">
+                                <video playsinline loop muted preload="none">
+                                    <source src="https://vpolitov.com/wp-content/uploads/2025/03/SBER_CF_1-2.mp4"
+                                        type="video/mp4">
+                                </video>
+                                <div class="thumb-hover-meta">
+                                    <span class="title">SBER Creative Frame</span>
+                                    <span class="category">Combine</span>
+                                </div>
+                            </div>
+                            <img src="https://vpolitov.com/wp-content/uploads/2025/03/SB_thumbnail_03.png"
+                                alt="Sber Creative Frame">
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="footer-section">
+                <div class="footer-top-row">
+                    <div class="footer-links">
+                        <a href="https://www.behance.net/f1nal" target="_blank">Behance</a>
+                        <a href="https://www.linkedin.com/in/f1nal/" target="_blank">LinkedIn</a>
+                        <a href="https://instagram.com/f1nal" target="_blank">Instagram</a>
+                    </div>
+                    <div class="footer-email">
+                        <a href="mailto:shmarov.oleg@gmail.com">shmarov.oleg@gmail.com</a>
+                    </div>
+                </div>
+                <div class="footer-divider"></div>
+                <div class="footer-bottom-row">
+                    <div class="footer-copy">2025 | Oleg Shmarov®</div>
+                </div>
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- SCROLL TO TOP BUTTON -->
+    <button class="back-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4l-8 8h6v8h4v-8h6z" />
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const isAnimating = document.documentElement.classList.contains('is-animating');
+            const baseDelay = 500;
+
+            // 1. Header Animation
+            if (isAnimating) {
+                setTimeout(() => {
+                    const header = document.querySelector('.semplice-header');
+                    if (header) header.classList.add('start-anim');
+                }, baseDelay);
+            }
+
+            // 2. Masonry Logic
+            function initMasonry() {
+                const grid = document.querySelector('.masonry');
+                if (!grid) return;
+
+                const items = Array.from(grid.querySelectorAll('.masonry-item'));
+                const isDesktop = window.innerWidth > 1024;
+
+                if (isDesktop) {
+                    const gap = 22;
+                    const colWidth = (grid.offsetWidth - gap) / 2;
+                    let leftH = 0, rightH = 0;
+
+                    items.forEach(item => {
+                        item.style.width = colWidth + 'px';
+                        item.style.position = 'absolute';
+                        const h = item.offsetHeight;
+
+                        if (leftH <= rightH) {
+                            item.style.left = '0px';
+                            item.style.top = leftH + 'px';
+                            leftH += h + gap;
+                        } else {
+                            item.style.left = (colWidth + gap) + 'px';
+                            item.style.top = rightH + 'px';
+                            rightH += h + gap;
+                        }
+                    });
+                    grid.style.height = Math.max(leftH, rightH) + 'px';
+                }
+
+                const startCardsTime = isAnimating ? (baseDelay + 200) : 0;
+
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('animate-in');
+                    }, startCardsTime + (index * 150));
+                });
+
+                const footerDelay = startCardsTime + (items.length * 150);
+                setTimeout(() => {
+                    document.querySelector('.footer-section').classList.add('animate-in');
+                }, footerDelay);
+            }
+
+            const images = document.querySelectorAll('.masonry img');
+            let loaded = 0;
+            const check = () => { loaded++; if (loaded >= images.length) initMasonry(); };
+
+            if (images.length === 0) {
+                initMasonry();
+            } else {
+                images.forEach(img => {
+                    if (img.complete) check();
+                    else { img.onload = check; img.onerror = check; }
+                });
+            }
+
+            setTimeout(initMasonry, 2000);
+            window.addEventListener('resize', () => setTimeout(initMasonry, 200));
+
+            // 3. VIDEO LOGIC (Desktop Hover & Mobile Autoplay)
+            const cards = document.querySelectorAll('.thumb-inner');
+
+            // Observer for Mobile
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (!video) return;
+
+                    if (entry.isIntersecting) {
+                        video.play().catch(() => { });
+                    } else {
+                        video.pause();
+                    }
+                });
+            }, { threshold: 0.5 }); // Play when 50% visible
+
+            cards.forEach(card => {
+                const video = card.querySelector('video');
+                if (!video) return;
+
+                if (window.matchMedia("(max-width: 1024px)").matches) {
+                    // Mobile Logic: Use Observer
+                    observer.observe(card);
+                } else {
+                    // Desktop Logic: Hover
+                    card.addEventListener('mouseenter', () => video.play().catch(() => { }));
+                    card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+                }
+            });
+
+            // --- SCROLL TO TOP ---
+            const btn = document.getElementById('scrollToTopBtn');
+            if (btn) {
+                const checkScroll = () => {
+                    const y = window.scrollY || document.documentElement.scrollTop;
+                    if (y > 300) {
+                        btn.classList.add('is-visible');
+                    } else {
+                        btn.classList.remove('is-visible');
+                    }
+                };
+
+                window.addEventListener('scroll', checkScroll, { passive: true });
+                checkScroll(); // Check immediately
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const start = window.scrollY || document.documentElement.scrollTop;
+                    const startTime = performance.now();
+                    const duration = 800;
+                    const easeOutCubic = t => (--t) * t * t + 1;
+
+                    function scrollStep(timestamp) {
+                        const currentTime = timestamp - startTime;
+                        let progress = Math.min(currentTime / duration, 1);
+                        const ease = easeOutCubic(progress);
+                        window.scrollTo(0, start * (1 - ease));
+                        if (currentTime < duration) {
+                            requestAnimationFrame(scrollStep);
+                        }
+                    }
+                    requestAnimationFrame(scrollStep);
+                });
+            }
+        });
+
+        function toggleMenu() {
+            document.getElementById('mobileOverlay').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

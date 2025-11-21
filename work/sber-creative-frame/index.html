@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SBER Creative Frame - Oleg Shmarov</title>
+    <link rel="stylesheet" href="../../css/project.css">
+    <script>
+        (function () {
+            const visited = sessionStorage.getItem('has_visited_site');
+            const html = document.documentElement;
+            if (visited) html.classList.add('is-visited');
+            else { html.classList.add('is-animating'); sessionStorage.setItem('has_visited_site', 'true'); }
+        })();
+    </script>
+</head>
+
+<body class="project-page">
+
+    <header class="semplice-header">
+        <div class="smp-nav-row">
+            <div class="nav-logo">
+                <a href="../../" class="image-link">
+                    <img src="../../img/logo.svg" alt="Logo">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../../">Work</a></li>
+                    <li><a href="../../reel/">Reel</a></li>
+                    <li><a href="../../play/">Play</a></li>
+                    <li><a href="../../info/">About</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <ul>
+            <li><a href="../../">Work</a></li>
+            <li><a href="../../reel/">Reel</a></li>
+            <li><a href="../../play/">Play</a></li>
+            <li><a href="../../info/">About</a></li>
+        </ul>
+    </div>
+
+    <main id="content-holder">
+        <div class="smp-container">
+            <div class="project-content">
+
+                <div class="project-header-wrapper project-anim-item">
+                    <div class="project-header-block">
+                        <h1 class="project-title">SBER Creative Frame</h1>
+                        <div class="project-meta">Combine</div>
+                    </div>
+                    <div class="project-description-block">
+                        <p class="project-description">
+                            In 2020, Sber completely changed its positioning, removing the "bank" label and transforming
+                            into a full-fledged ecosystem of services. The new brand united technology, convenience, and
+                            user care — embedding these values into its design.
+
+                            After a few years, the design system required further fine-tuning. This led to the
+                            development of a new creative framework — a visual language focused on 3D, designed to
+                            strengthen relationships with users and refresh Sber's visual communication.
+
+                            Together with Combine studio, I have developed many unique images that helped Sber to change
+                            its visual style.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="project-gallery">
+                    <div class="project-media-item p-grid-full project-anim-item">
+                        <video autoplay loop muted playsinline>
+                            <source src="https://vpolitov.com/wp-content/uploads/2025/03/SBER_CF_1-2.mp4"
+                                type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="project-media-item p-grid-half project-anim-item">
+                        <img src="https://vpolitov.com/wp-content/uploads/2025/03/SB_thumbnail_03.png" alt="Detail 1">
+                    </div>
+                    <div class="project-media-item p-grid-half project-anim-item">
+                        <img src="https://vpolitov.com/wp-content/uploads/2025/02/sh_002_v01-0-00-01-08_1.jpg"
+                            alt="Detail 2">
+                    </div>
+                    <div class="project-media-item p-grid-full project-anim-item">
+                        <img src="https://placehold.co/1400x788/EEE/31343C?text=Wide+Shot+Render" alt="Wide Shot">
+                    </div>
+                    <div class="project-media-item p-grid-half project-anim-item">
+                        <img src="https://placehold.co/700x700/EEE/31343C?text=Process+Detail" alt="Process">
+                    </div>
+                    <div class="project-media-item p-grid-half project-anim-item">
+                        <img src="https://placehold.co/700x700/EEE/31343C?text=Texture+Detail" alt="Texture">
+                    </div>
+                </div>
+
+                <div class="project-credits project-anim-item">
+                    <p><strong>Art Direction & Design:</strong> Oleg Shmarov</p>
+                    <p><strong>Music & Sound Design:</strong> Blink Audio</p>
+                    <p><strong>Tools:</strong> Houdini, Redshift, Nuke</p>
+                </div>
+
+                <div class="project-navigation project-anim-item">
+                    <a href="../elfbar/">← ELF BAR</a>
+                    <a href="../football-dynamics/">Football Dynamics →</a>
+                </div>
+
+                <footer class="footer-section">
+                    <div class="footer-top-row">
+                        <div class="footer-links">
+                            <a href="https://www.behance.net/f1nal" target="_blank">Behance</a>
+                            <a href="https://www.linkedin.com/in/f1nal/" target="_blank">LinkedIn</a>
+                            <a href="https://instagram.com/f1nal" target="_blank">Instagram</a>
+                        </div>
+                        <div class="footer-email">
+                            <a href="mailto:shmarov.oleg@gmail.com">shmarov.oleg@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="footer-divider"></div>
+                    <div class="footer-bottom-row">
+                        <div class="footer-copy">2025 | Oleg Shmarov®</div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCROLL TO TOP BUTTON -->
+    <button class="back-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4l-8 8h6v8h4v-8h6z" />
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.documentElement.classList.contains('is-animating')) {
+                setTimeout(() => { document.querySelector('.semplice-header')?.classList.add('start-anim'); }, 500);
+            }
+            const contentItems = document.querySelectorAll('.project-anim-item');
+            contentItems.forEach((item, index) => {
+                setTimeout(() => { item.classList.add('animate-in'); }, 200 + (index * 100));
+            });
+            setTimeout(() => document.querySelector('.footer-section').classList.add('animate-in'), 200 + (contentItems.length * 100) + 100);
+
+            // --- SCROLL TO TOP ---
+            const btn = document.getElementById('scrollToTopBtn');
+            if (btn) {
+                const checkScroll = () => {
+                    const y = window.scrollY || document.documentElement.scrollTop;
+                    if (y > 300) {
+                        btn.classList.add('is-visible');
+                    } else {
+                        btn.classList.remove('is-visible');
+                    }
+                };
+
+                window.addEventListener('scroll', checkScroll, { passive: true });
+                checkScroll(); // Check immediately
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const start = window.scrollY || document.documentElement.scrollTop;
+                    const startTime = performance.now();
+                    const duration = 800;
+                    const easeOutCubic = t => (--t) * t * t + 1;
+
+                    function scrollStep(timestamp) {
+                        const currentTime = timestamp - startTime;
+                        let progress = Math.min(currentTime / duration, 1);
+                        const ease = easeOutCubic(progress);
+                        window.scrollTo(0, start * (1 - ease));
+                        if (currentTime < duration) {
+                            requestAnimationFrame(scrollStep);
+                        }
+                    }
+                    requestAnimationFrame(scrollStep);
+                });
+            }
+        });
+
+        function toggleMenu() {
+            document.getElementById('mobileOverlay').classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>
