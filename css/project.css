@@ -379,10 +379,10 @@ nav ul li a:hover::after,
 }
 
 .thumb-hover-meta .title {
-    font-family: 'FunnelDisplay-SemiBold', sans-serif;
-    font-size: 48px;
+    font-family: 'FunnelDisplay-Bold', sans-serif;
+    font-size: 38px;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     line-height: 1;
 }
 
@@ -1113,5 +1113,6 @@ nav ul li a:hover::after,
         margin-right: 0;
     }
 }
+
 
 
