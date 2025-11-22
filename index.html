@@ -279,11 +279,12 @@
                 }
             });
 
-            // --- SCROLL TO TOP ---
+            // --- SCROLL TO TOP (ИСПРАВЛЕНО) ---
             const btn = document.getElementById('scrollToTopBtn');
             if (btn) {
                 const checkScroll = () => {
-                    const y = window.scrollY || document.documentElement.scrollTop;
+                    // Проверяем несколько источников прокрутки для надежности
+                    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
                     if (y > 300) {
                         btn.classList.add('is-visible');
                     } else {
@@ -296,21 +297,7 @@
 
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const start = window.scrollY || document.documentElement.scrollTop;
-                    const startTime = performance.now();
-                    const duration = 800;
-                    const easeOutCubic = t => (--t) * t * t + 1;
-
-                    function scrollStep(timestamp) {
-                        const currentTime = timestamp - startTime;
-                        let progress = Math.min(currentTime / duration, 1);
-                        const ease = easeOutCubic(progress);
-                        window.scrollTo(0, start * (1 - ease));
-                        if (currentTime < duration) {
-                            requestAnimationFrame(scrollStep);
-                        }
-                    }
-                    requestAnimationFrame(scrollStep);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
         });
