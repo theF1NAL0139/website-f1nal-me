@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Play - Oleg Shmarov</title>
     <link rel="stylesheet" href="../css/project.css">
+    <!-- Fallback для локального запуска, если CSS рядом -->
+    <link rel="stylesheet" href="css/project.css" onerror="this.remove()"> 
     <link rel="icon" href="../img/favicon.webp" type="image/svg+xml">
 
     <style>
@@ -19,7 +21,7 @@
             overflow: hidden;
             background: #000;
             cursor: pointer;
-            min-height: 400px;
+            min-height: 300px; /* Чуть уменьшил для мобильных */
         }
 
         .play-item.loaded {
@@ -378,6 +380,7 @@
         </div>
     </div>
 
+    <!-- КНОПКА НАВЕРХ -->
     <button class="back-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 4l-8 8h6v8h4v-8h6z" />
@@ -385,143 +388,136 @@
     </button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Анимация хедера
             if (document.documentElement.classList.contains('is-animating')) {
                 setTimeout(() => { document.querySelector('.semplice-header')?.classList.add('start-anim'); }, 500);
             }
 
-            // --- АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ИЗОБРАЖЕНИЙ ИЗ ПАПКИ ---
+            // --- ИСПРАВЛЕННАЯ АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ИЗОБРАЖЕНИЙ ---
+            // Вместо fetch (который не работает локально), мы создаем Image объекты
             const playGrid = document.getElementById('playGrid');
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            const images = [];
-
-            // Пробуем загрузить изображения с img_1 до img_100
-            for (let i = 1; i <= 100; i++) {
-                for (const ext of imageExtensions) {
-                    const imgPath = `imgs/img_${i}.${ext}`;
-                    try {
-                        const response = await fetch(imgPath, { method: 'HEAD' });
-                        if (response.ok) {
-                            images.push(imgPath);
-                            break; // Нашли файл, переходим к следующему номеру
-                        }
-                    } catch (e) {
-                        // Файл не найден, продолжаем
-                    }
+            const imageExtensions = ['jpg', 'png', 'gif', 'webp', 'jpeg'];
+            const maxImagesToCheck = 30; // Проверяем первые 30 номеров, чтобы не зависнуть
+            
+            // Функция проверки существования картинки
+            const tryLoadImage = (number, extIndex = 0) => {
+                if (number > maxImagesToCheck) {
+                    finishAnimation();
+                    return;
                 }
-            }
+                if (extIndex >= imageExtensions.length) {
+                    // Если перебрали все расширения для этого номера и не нашли - переходим к следующему числу
+                    tryLoadImage(number + 1, 0);
+                    return;
+                }
 
-            // Создаем карточки для найденных изображений
-            images.forEach((imgPath, index) => {
+                const ext = imageExtensions[extIndex];
+                const imgPath = `imgs/img_${number}.${ext}`;
+                
+                const tempImg = new Image();
+                
+                tempImg.onload = function() {
+                    // Картинка существует! Создаем карточку
+                    createCard(imgPath, number);
+                    // Ищем следующее число
+                    tryLoadImage(number + 1, 0);
+                };
+                
+                tempImg.onerror = function() {
+                    // Не существует, пробуем другое расширение для этого же числа
+                    tryLoadImage(number, extIndex + 1);
+                };
+                
+                tempImg.src = imgPath;
+            };
+
+            function createCard(src, index) {
                 const playItem = document.createElement('div');
                 playItem.className = 'play-item project-anim-item';
-
+                
                 const img = document.createElement('img');
-                img.src = imgPath;
-                img.alt = `Creative Work ${index + 1}`;
+                img.src = src;
+                img.alt = `Creative Work ${index}`;
+                
+                // Обработчик клика для модалки
+                playItem.onclick = function() {
+                   openModal(src);
+                };
 
                 playItem.appendChild(img);
                 playGrid.appendChild(playItem);
-            });
 
-            // Анимация появления элементов
-            const contentItems = document.querySelectorAll('.project-anim-item');
-            contentItems.forEach((item, index) => setTimeout(() => item.classList.add('animate-in'), 200 + (index * 100)));
-            setTimeout(() => document.querySelector('.footer-section')?.classList.add('animate-in'), 200 + (contentItems.length * 100) + 100);
-
-            // --- ПЛАВНАЯ ПОСТЕПЕННАЯ ЗАГРУЗКА КАРТОЧЕК PLAY ---
-            const playItems = document.querySelectorAll('.play-item');
-
-            playItems.forEach((item, index) => {
+                // Плавное появление сразу после добавления
                 setTimeout(() => {
-                    item.classList.add('loaded');
-                }, 300 + (index * 200));
-            });
+                    playItem.classList.add('loaded');
+                    playItem.classList.add('animate-in');
+                }, 100);
+            }
 
-            // --- МОДАЛЬНОЕ ОКНО С ЧАСТИЦАМИ ---
+            function finishAnimation() {
+                // Анимация появления остальных элементов
+                const contentItems = document.querySelectorAll('.project-anim-item:not(.play-item)');
+                contentItems.forEach((item, index) => setTimeout(() => item.classList.add('animate-in'), 200 + (index * 100)));
+                setTimeout(() => document.querySelector('.footer-section')?.classList.add('animate-in'), 500);
+            }
+
+            // Запускаем загрузчик
+            tryLoadImage(1);
+
+
+            // --- МОДАЛЬНОЕ ОКНО ---
             const modal = document.getElementById('imageModal');
             const modalImg = modal.querySelector('img');
             const modalClose = document.getElementById('modalClose');
             const modalContentWrapper = document.getElementById('modalContentWrapper');
 
-            // Функция создания частиц
             function createParticles() {
                 const particleCount = 40;
                 for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
-
-                    // Случайная позиция вокруг изображения
                     const angle = (Math.PI * 2 * i) / particleCount;
                     const radius = 250 + Math.random() * 200;
                     const x = Math.cos(angle) * radius;
                     const y = Math.sin(angle) * radius;
-
                     particle.style.left = `calc(50% + ${x}px)`;
                     particle.style.top = `calc(50% + ${y}px)`;
                     particle.style.animationDelay = `${Math.random() * 3}s`;
                     particle.style.animationDuration = `${2 + Math.random() * 2}s`;
-
                     modalContentWrapper.appendChild(particle);
                 }
             }
 
-            // Функция удаления частиц
             function removeParticles() {
                 const particles = modalContentWrapper.querySelectorAll('.particle');
                 particles.forEach(p => p.remove());
             }
 
-            // Открытие модального окна
-            playItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    const img = this.querySelector('img');
-                    if (img) {
-                        modalImg.src = img.src;
-                        modal.classList.add('active');
-                        document.body.style.overflow = 'hidden';
+            function openModal(src) {
+                modalImg.src = src;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(createParticles, 400);
+            }
 
-                        // Создаем частицы с задержкой
-                        setTimeout(() => {
-                            createParticles();
-                        }, 400);
-                    }
-                });
-            });
-
-            // Закрытие модального окна
             function closeModal() {
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
                 removeParticles();
-                setTimeout(() => {
-                    modalImg.src = '';
-                }, 600);
+                setTimeout(() => { modalImg.src = ''; }, 600);
             }
 
-            modalClose.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeModal();
-            });
+            modalClose.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-
-            // Закрытие по Escape
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-
-            // --- SCROLL TO TOP ---
+            // --- SCROLL TO TOP (ИСПРАВЛЕНО) ---
             const btn = document.getElementById('scrollToTopBtn');
             if (btn) {
                 const checkScroll = () => {
-                    const y = window.scrollY || document.documentElement.scrollTop;
+                    // Проверяем прокрутку и body и documentElement для надежности
+                    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
                     if (y > 300) {
                         btn.classList.add('is-visible');
                     } else {
@@ -530,30 +526,15 @@
                 };
 
                 window.addEventListener('scroll', checkScroll, { passive: true });
-                checkScroll();
+                checkScroll(); 
 
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const start = window.scrollY || document.documentElement.scrollTop;
-                    const startTime = performance.now();
-                    const duration = 800;
-                    const easeOutCubic = t => (--t) * t * t + 1;
-
-                    function scrollStep(timestamp) {
-                        const currentTime = timestamp - startTime;
-                        let progress = Math.min(currentTime / duration, 1);
-                        const ease = easeOutCubic(progress);
-                        window.scrollTo(0, start * (1 - ease));
-                        if (currentTime < duration) {
-                            requestAnimationFrame(scrollStep);
-                        }
-                    }
-                    requestAnimationFrame(scrollStep);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
         });
         function toggleMenu() { document.getElementById('mobileOverlay').classList.toggle('active'); }
     </script>
 </body>
-
 </html>
