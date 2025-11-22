@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>About - Oleg Shmarov</title>
+    <link rel="stylesheet" href="../css/project.css">
+    <link rel="icon" href="../img/icon.svg" type="image/svg+xml">
+
+    <script>
+        (function () {
+            const visited = sessionStorage.getItem('has_visited_site');
+            const html = document.documentElement;
+            if (visited) html.classList.add('is-visited');
+            else { html.classList.add('is-animating'); sessionStorage.setItem('has_visited_site', 'true'); }
+        })();
+    </script>
+</head>
+
+<body class="project-page">
+
+    <header class="semplice-header">
+        <div class="smp-nav-row">
+            <div class="nav-logo">
+                <a href="../" class="image-link">
+                    <img src="../img/logo.svg" alt="Logo">
+                </a>
+            </div>
+            <nav>
+                <ul>
+            <li><a href="https://f1nal.me">Work</a></li>
+            <li><a href="https://f1nal.me/reel">Reel</a></li>
+            <li><a href="https://f1nal.me/play">Play</a></li>
+            <li><a href="https://f1nal.me/info">About</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <ul>
+            <li><a href="https://f1nal.me">Work</a></li>
+            <li><a href="https://f1nal.me/reel">Reel</a></li>
+            <li><a href="https://f1nal.me/play">Play</a></li>
+          <li><a href="https://f1nal.me/info">About</a></li>
+        </ul>
+    </div>
+
+    <main id="content-holder">
+        <div class="smp-container">
+
+            <div class="info-wrapper">
+
+                <!-- PHOTO COLUMN -->
+                <div class="info-image-col project-anim-item">
+                    <!-- Замените на свое фото -->
+                    <img src="../img/me.png" alt="Oleg Shmarov" class="info-photo">
+                </div>
+
+                <!-- TEXT COLUMN -->
+                <div class="info-text-col project-anim-item">
+                    <div class="info-bio">
+                        <p>Hello! I'm Oleg Shmarov, a 3D Motion Designer and Art Director based in [Your City].</p>
+                        <p>I specialize in creating abstract simulations, product visualizations, and digital
+                            environments. My tools of choice are Houdini, Redshift, and Nuke.</p>
+                        <p>I have worked with studios such as Inertia, Combine, and others to create compelling visual
+                            narratives for global brands.</p>
+                    </div>
+
+                    <div class="info-links-block">
+                        <div class="info-links-title">Connect</div>
+                        <div class="info-link-row">
+                            <a href="mailto:shmarov.oleg@gmail.com">Email</a>
+                            <a href="https://www.behance.net/f1nal" target="_blank">Behance</a>
+                            <a href="https://www.linkedin.com/in/f1nal/" target="_blank">LinkedIn</a>
+                            <a href="https://instagram.com/f1nal" target="_blank">Instagram</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="footer-section">
+                <div class="footer-divider"></div>
+                <div class="footer-bottom-row">
+                    <div class="footer-copy">2025 | Oleg Shmarov®</div>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <button class="back-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4l-8 8h6v8h4v-8h6z" />
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.documentElement.classList.contains('is-animating')) {
+                setTimeout(() => { document.querySelector('.semplice-header')?.classList.add('start-anim'); }, 500);
+            }
+            const contentItems = document.querySelectorAll('.project-anim-item');
+            contentItems.forEach((item, index) => setTimeout(() => item.classList.add('animate-in'), 200 + (index * 100)));
+            setTimeout(() => document.querySelector('.footer-section').classList.add('animate-in'), 200 + (contentItems.length * 100) + 100);
+
+            // --- SCROLL TO TOP ---
+            const btn = document.getElementById('scrollToTopBtn');
+            if (btn) {
+                const checkScroll = () => {
+                    const y = window.scrollY || document.documentElement.scrollTop;
+                    if (y > 300) {
+                        btn.classList.add('is-visible');
+                    } else {
+                        btn.classList.remove('is-visible');
+                    }
+                };
+
+                window.addEventListener('scroll', checkScroll, { passive: true });
+                checkScroll(); // Check immediately
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const start = window.scrollY || document.documentElement.scrollTop;
+                    const startTime = performance.now();
+                    const duration = 800;
+                    const easeOutCubic = t => (--t) * t * t + 1;
+
+                    function scrollStep(timestamp) {
+                        const currentTime = timestamp - startTime;
+                        let progress = Math.min(currentTime / duration, 1);
+                        const ease = easeOutCubic(progress);
+                        window.scrollTo(0, start * (1 - ease));
+                        if (currentTime < duration) {
+                            requestAnimationFrame(scrollStep);
+                        }
+                    }
+                    requestAnimationFrame(scrollStep);
+                });
+            }
+        });
+        function toggleMenu() { document.getElementById('mobileOverlay').classList.toggle('active'); }
+    </script>
+</body>
+
+</html>
