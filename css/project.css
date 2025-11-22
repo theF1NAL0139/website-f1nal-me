@@ -198,7 +198,7 @@ nav ul li a:hover::after,
 }
 
 .project-title {
-    font-size: 36px;
+    font-size: 42px;
     font-family: 'FunnelDisplay-SemiBold', sans-serif;
     line-height: 1.1;
     margin-bottom: 10px;
@@ -207,7 +207,7 @@ nav ul li a:hover::after,
 }
 
 .project-meta {
-    font-size: 12px;
+    font-size: 16px;
     color: #888;
     margin-top: 10px;
 }
@@ -218,7 +218,7 @@ nav ul li a:hover::after,
 }
 
 .project-description {
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.6;
     color: #000;
     letter-spacing: 0;
@@ -1113,6 +1113,7 @@ nav ul li a:hover::after,
         margin-right: 0;
     }
 }
+
 
 
 
