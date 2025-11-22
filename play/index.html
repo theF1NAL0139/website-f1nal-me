@@ -11,6 +11,14 @@
     <link rel="icon" href="../img/favicon.webp" type="image/svg+xml">
 
     <style>
+        /* Уменьшаем отступы только для этой страницы, чтобы поднять контент выше */
+        #content-holder {
+            padding-top: 40px !important; /* Было 60 */
+        }
+        .project-header-wrapper {
+            margin-bottom: 40px !important; /* Было 60 */
+        }
+
         /* Стили для плавной загрузки карточек Play */
         .play-item {
             opacity: 0;
@@ -21,7 +29,7 @@
             overflow: hidden;
             background: #000;
             cursor: pointer;
-            min-height: 300px; /* Чуть уменьшил для мобильных */
+            min-height: 300px;
         }
 
         .play-item.loaded {
@@ -89,13 +97,17 @@
             opacity: 0;
             cursor: zoom-out;
             overflow: hidden;
+            /* Анимация закрытия: плавно убираем прозрачность и блюр */
+            transition: opacity 0.3s ease, backdrop-filter 0.3s ease, background-color 0.3s ease;
         }
 
         .image-modal.active {
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: modalFadeIn 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            /* Анимация открытия */
+            animation: modalFadeIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            opacity: 1; /* Важно для transition при закрытии */
         }
 
         @keyframes modalFadeIn {
@@ -127,102 +139,31 @@
             border-radius: 12px;
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6),
                 0 0 60px rgba(255, 255, 255, 0.1);
-            transform: scale(0.7) rotateX(15deg);
+            transform: scale(0.9);
             opacity: 0;
-            filter: blur(20px);
+            /* Transition для плавного закрытия */
+            transition: transform 0.3s ease, opacity 0.3s ease;
             position: relative;
             z-index: 2;
+            cursor: zoom-out; /* Курсор закрытия на картинке */
         }
 
         .image-modal.active img {
-            animation: imageZoomIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.2s forwards;
+            animation: imageZoomIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.1s forwards;
         }
 
         @keyframes imageZoomIn {
             0% {
-                transform: scale(0.7) rotateX(15deg);
-                opacity: 0;
-                filter: blur(20px);
-            }
-
-            60% {
-                transform: scale(1.02) rotateX(0deg);
-            }
-
-            100% {
-                transform: scale(1) rotateX(0deg);
-                opacity: 1;
-                filter: blur(0px);
-            }
-        }
-
-        /* Частицы вокруг изображения - ПОВЕРХ ВСЕГО */
-        .particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10004;
-            animation: particleFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes particleFloat {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
+                transform: scale(0.9);
                 opacity: 0;
             }
-
-            10% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-
-            90% {
-                opacity: 1;
-            }
-        }
-
-        /* Свечение вокруг изображения */
-        .image-modal::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .image-modal.active::before {
-            animation: glowPulse 0.8s ease-out 0.3s forwards;
-        }
-
-        @keyframes glowPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
             100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.6;
+                transform: scale(1);
+                opacity: 1;
             }
         }
+
+        /* ЧАСТИЦЫ УДАЛЕНЫ */
 
         .modal-close {
             position: absolute;
@@ -241,7 +182,7 @@
         }
 
         .image-modal.active .modal-close {
-            animation: closeBtnFadeIn 0.4s ease 0.6s forwards;
+            animation: closeBtnFadeIn 0.4s ease 0.2s forwards;
         }
 
         @keyframes closeBtnFadeIn {
@@ -395,19 +336,16 @@
             }
 
             // --- ИСПРАВЛЕННАЯ АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ИЗОБРАЖЕНИЙ ---
-            // Вместо fetch (который не работает локально), мы создаем Image объекты
             const playGrid = document.getElementById('playGrid');
             const imageExtensions = ['jpg', 'png', 'gif', 'webp', 'jpeg'];
-            const maxImagesToCheck = 30; // Проверяем первые 30 номеров, чтобы не зависнуть
+            const maxImagesToCheck = 30; 
             
-            // Функция проверки существования картинки
             const tryLoadImage = (number, extIndex = 0) => {
                 if (number > maxImagesToCheck) {
                     finishAnimation();
                     return;
                 }
                 if (extIndex >= imageExtensions.length) {
-                    // Если перебрали все расширения для этого номера и не нашли - переходим к следующему числу
                     tryLoadImage(number + 1, 0);
                     return;
                 }
@@ -418,14 +356,11 @@
                 const tempImg = new Image();
                 
                 tempImg.onload = function() {
-                    // Картинка существует! Создаем карточку
                     createCard(imgPath, number);
-                    // Ищем следующее число
                     tryLoadImage(number + 1, 0);
                 };
                 
                 tempImg.onerror = function() {
-                    // Не существует, пробуем другое расширение для этого же числа
                     tryLoadImage(number, extIndex + 1);
                 };
                 
@@ -440,7 +375,6 @@
                 img.src = src;
                 img.alt = `Creative Work ${index}`;
                 
-                // Обработчик клика для модалки
                 playItem.onclick = function() {
                    openModal(src);
                 };
@@ -448,7 +382,6 @@
                 playItem.appendChild(img);
                 playGrid.appendChild(playItem);
 
-                // Плавное появление сразу после добавления
                 setTimeout(() => {
                     playItem.classList.add('loaded');
                     playItem.classList.add('animate-in');
@@ -456,67 +389,46 @@
             }
 
             function finishAnimation() {
-                // Анимация появления остальных элементов
                 const contentItems = document.querySelectorAll('.project-anim-item:not(.play-item)');
                 contentItems.forEach((item, index) => setTimeout(() => item.classList.add('animate-in'), 200 + (index * 100)));
                 setTimeout(() => document.querySelector('.footer-section')?.classList.add('animate-in'), 500);
             }
 
-            // Запускаем загрузчик
             tryLoadImage(1);
 
 
-            // --- МОДАЛЬНОЕ ОКНО ---
+            // --- МОДАЛЬНОЕ ОКНО (ОБНОВЛЕНО) ---
             const modal = document.getElementById('imageModal');
             const modalImg = modal.querySelector('img');
             const modalClose = document.getElementById('modalClose');
-            const modalContentWrapper = document.getElementById('modalContentWrapper');
 
-            function createParticles() {
-                const particleCount = 40;
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    const angle = (Math.PI * 2 * i) / particleCount;
-                    const radius = 250 + Math.random() * 200;
-                    const x = Math.cos(angle) * radius;
-                    const y = Math.sin(angle) * radius;
-                    particle.style.left = `calc(50% + ${x}px)`;
-                    particle.style.top = `calc(50% + ${y}px)`;
-                    particle.style.animationDelay = `${Math.random() * 3}s`;
-                    particle.style.animationDuration = `${2 + Math.random() * 2}s`;
-                    modalContentWrapper.appendChild(particle);
-                }
-            }
-
-            function removeParticles() {
-                const particles = modalContentWrapper.querySelectorAll('.particle');
-                particles.forEach(p => p.remove());
-            }
+            // Клик по картинке закрывает окно
+            modalImg.onclick = function(e) {
+                e.stopPropagation();
+                closeModal();
+            };
 
             function openModal(src) {
                 modalImg.src = src;
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                setTimeout(createParticles, 400);
             }
 
             function closeModal() {
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
-                removeParticles();
-                setTimeout(() => { modalImg.src = ''; }, 600);
+                // Очищаем src с задержкой, чтобы видна была анимация исчезновения
+                setTimeout(() => { modalImg.src = ''; }, 300); 
             }
 
             modalClose.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
 
-            // --- SCROLL TO TOP (ИСПРАВЛЕНО) ---
+            // --- SCROLL TO TOP ---
             const btn = document.getElementById('scrollToTopBtn');
             if (btn) {
                 const checkScroll = () => {
-                    // Проверяем прокрутку и body и documentElement для надежности
                     const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
                     if (y > 300) {
                         btn.classList.add('is-visible');
