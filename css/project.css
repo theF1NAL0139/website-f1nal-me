@@ -923,8 +923,6 @@ nav ul li a:hover::after,
     /* Чуть светлее при наведении */
 }
 
-}
-
 @keyframes floatParticle {
     0% {
         transform: translateY(0) translateX(0) scale(1);
@@ -1321,4 +1319,5 @@ nav ul li a:hover::after,
         margin-bottom: 15px;
         margin-right: 0;
     }
+
 }
