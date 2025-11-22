@@ -83,45 +83,34 @@
             opacity: 1;
         }
 
-        /* Модальное окно для просмотра изображений */
+        /* ИСПРАВЛЕНО: Убрали display:none, заменили на visibility */
         .image-modal {
-            display: none;
+            /* Всегда flex, но скрыто visibility */
+            display: flex; 
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0);
-            backdrop-filter: blur(0px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            
+            /* Скрытое состояние */
             opacity: 0;
-            cursor: zoom-out;
-            overflow: hidden;
-            /* Анимация закрытия: плавно убираем прозрачность и блюр */
-            transition: opacity 0.3s ease, backdrop-filter 0.3s ease, background-color 0.3s ease;
+            visibility: hidden;
+            pointer-events: none; /* Чтобы нельзя было нажать */
+            
+            /* Плавный переход */
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
         .image-modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Анимация открытия */
-            animation: modalFadeIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-            opacity: 1; /* Важно для transition при закрытии */
-        }
-
-        @keyframes modalFadeIn {
-            0% {
-                opacity: 0;
-                background: rgba(0, 0, 0, 0);
-                backdrop-filter: blur(0px);
-            }
-
-            100% {
-                opacity: 1;
-                background: rgba(0, 0, 0, 0.95);
-                backdrop-filter: blur(10px);
-            }
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Включаем клики */
         }
 
         .modal-content-wrapper {
@@ -139,31 +128,21 @@
             border-radius: 12px;
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6),
                 0 0 60px rgba(255, 255, 255, 0.1);
+            
+            /* Начальное состояние картинки */
             transform: scale(0.9);
             opacity: 0;
-            /* Transition для плавного закрытия */
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease;
+            
             position: relative;
             z-index: 2;
-            cursor: zoom-out; /* Курсор закрытия на картинке */
+            cursor: zoom-out; 
         }
 
         .image-modal.active img {
-            animation: imageZoomIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.1s forwards;
+            transform: scale(1);
+            opacity: 1;
         }
-
-        @keyframes imageZoomIn {
-            0% {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* ЧАСТИЦЫ УДАЛЕНЫ */
 
         .modal-close {
             position: absolute;
@@ -178,23 +157,16 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10005;
+            
+            /* Начальное состояние кнопки */
             opacity: 0;
+            transform: scale(0.8) rotate(-90deg);
+            transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
         }
 
         .image-modal.active .modal-close {
-            animation: closeBtnFadeIn 0.4s ease 0.2s forwards;
-        }
-
-        @keyframes closeBtnFadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8) rotate(-90deg);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
         }
 
         .modal-close:hover {
@@ -397,7 +369,7 @@
             tryLoadImage(1);
 
 
-            // --- МОДАЛЬНОЕ ОКНО (ОБНОВЛЕНО) ---
+            // --- МОДАЛЬНОЕ ОКНО (ИСПРАВЛЕНО: без блокировки скролла) ---
             const modal = document.getElementById('imageModal');
             const modalImg = modal.querySelector('img');
             const modalClose = document.getElementById('modalClose');
@@ -411,14 +383,15 @@
             function openModal(src) {
                 modalImg.src = src;
                 modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                // УБРАНО: document.body.style.overflow = 'hidden'; <- Это вызывало дерганье
+                // Вместо этого скролл на странице остается, но мы его блокируем визуально или просто оставляем
             }
 
             function closeModal() {
                 modal.classList.remove('active');
-                document.body.style.overflow = '';
+                // УБРАНО: document.body.style.overflow = ''; 
                 // Очищаем src с задержкой, чтобы видна была анимация исчезновения
-                setTimeout(() => { modalImg.src = ''; }, 300); 
+                setTimeout(() => { modalImg.src = ''; }, 400); 
             }
 
             modalClose.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
