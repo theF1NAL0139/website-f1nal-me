@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Play - Oleg Shmarov</title>
+    <link rel="stylesheet" href="../css/project.css">
+    <!-- Fallback для локального запуска, если CSS рядом -->
+    <link rel="stylesheet" href="css/project.css" onerror="this.remove()"> 
+    <link rel="icon" href="../img/favicon.webp" type="image/svg+xml">
+
+    <style>
+        /* Уменьшаем отступы только для этой страницы, чтобы поднять контент выше */
+        #content-holder {
+            padding-top: 40px !important; /* Было 60 */
+        }
+        .project-header-wrapper {
+            margin-bottom: 40px !important; /* Было 60 */
+        }
+
+        /* Стили для плавной загрузки карточек Play */
+        .play-item {
+            opacity: 0;
+            transform: translateY(80px) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            cursor: pointer;
+            min-height: 300px;
+        }
+
+        .play-item.loaded {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Красивый hover эффект */
+        .play-item.loaded {
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.5s ease;
+        }
+
+        .play-item.loaded:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            z-index: 10;
+        }
+
+        .play-item.loaded:hover img {
+            transform: scale(1.08);
+            filter: brightness(1.1);
+        }
+
+        /* Изображения заполняют карточку полностью */
+        .play-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.4s ease;
+        }
+
+        /* Overlay при hover */
+        .play-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .play-item.loaded:hover::before {
+            opacity: 1;
+        }
+
+        /* ИСПРАВЛЕНО: Правильная анимация исчезновения через задержку visibility */
+        .image-modal {
+            /* Базовые стили */
+            display: flex; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            
+            /* Начальное (скрытое) состояние */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            
+            /* СЕКРЕТ АНИМАЦИИ ЗАКРЫТИЯ:
+               При закрытии: opacity меняется 0.4s, а visibility ждет 0.4s перед тем как стать hidden.
+            */
+            transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+        }
+
+        .image-modal.active {
+            /* Активное состояние */
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            
+            /* При открытии: все происходит сразу, без задержки */
+            transition: opacity 0.4s ease, visibility 0s linear 0s;
+        }
+
+        .modal-content-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+        }
+
+        .image-modal img {
+            max-width: 85%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6),
+                0 0 60px rgba(255, 255, 255, 0.1);
+            
+            /* Скрытое состояние картинки (уменьшена) */
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease;
+            
+            position: relative;
+            z-index: 2;
+            cursor: zoom-out; 
+        }
+
+        .image-modal.active img {
+            /* Активное состояние картинки */
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10005;
+            
+            /* Скрытая кнопка */
+            opacity: 0;
+            transform: scale(0.8) rotate(-90deg);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .image-modal.active .modal-close {
+            /* Видимая кнопка */
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            transition-delay: 0.2s; /* Небольшая задержка при появлении */
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-close::before,
+        .modal-close::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        .modal-close::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .modal-close::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* Мобильная версия */
+        @media (max-width: 768px) {
+            .play-item {
+                min-height: auto;
+            }
+
+            .play-item img {
+                height: auto;
+                object-fit: contain;
+            }
+
+            .image-modal img {
+                max-width: 95%;
+                max-height: 80vh;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            const visited = sessionStorage.getItem('has_visited_site');
+            const html = document.documentElement;
+            if (visited) html.classList.add('is-visited');
+            else { html.classList.add('is-animating'); sessionStorage.setItem('has_visited_site', 'true'); }
+        })();
+    </script>
+</head>
+
+<body class="project-page">
+
+    <header class="semplice-header">
+        <div class="smp-nav-row">
+            <div class="nav-logo">
+                <a href="../" class="image-link">
+                    <img src="../img/logo.svg" alt="Logo">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="https://f1nal.me/work">Work</a></li>
+                    <li><a href="https://f1nal.me/reel">Reel</a></li>
+                    <li><a href="https://f1nal.me/play">Play</a></li>
+                    <li><a href="https://f1nal.me/info">About</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileOverlay">
+        <ul>
+            <li><a href="https://f1nal.me">Work</a></li>
+            <li><a href="https://f1nal.me/reel">Reel</a></li>
+            <li><a href="https://f1nal.me/play">Play</a></li>
+          <li><a href="https://f1nal.me/info">About</a></li>
+        </ul>
+    </div>
+
+    <main id="content-holder">
+        <div class="smp-container">
+
+            <div class="project-header-wrapper project-anim-item">
+                <div class="project-header-block">
+                    <h1 class="project-title">Playground</h1>
+                    <div class="project-meta">Experiments & Styleframes</div>
+                </div>
+            </div>
+
+            <!-- PLAY GRID - Автоматически заполняется из папки imgs -->
+            <div class="play-grid" id="playGrid">
+                <!-- Карточки будут добавлены автоматически через JavaScript -->
+            </div>
+
+            <footer class="footer-section">
+                <div class="footer-top-row">
+                    <div class="footer-links">
+                        <a href="https://www.behance.net/f1nal" target="_blank">Behance</a>
+                        <a href="https://www.linkedin.com/in/f1nal/" target="_blank">LinkedIn</a>
+                        <a href="https://instagram.com/f1nal" target="_blank">Instagram</a>
+                    </div>
+                    <div class="footer-email"><a href="mailto:shmarov.oleg@gmail.com">shmarov.oleg@gmail.com</a></div>
+                </div>
+                <div class="footer-divider"></div>
+                <div class="footer-bottom-row">
+                    <div class="footer-copy">2025 | Oleg Shmarov®</div>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Модальное окно для просмотра изображений -->
+    <div class="image-modal" id="imageModal">
+        <button class="modal-close" id="modalClose"></button>
+        <div class="modal-content-wrapper" id="modalContentWrapper">
+            <img src="" alt="Full size image">
+        </div>
+    </div>
+
+    <!-- КНОПКА НАВЕРХ -->
+    <button class="back-to-top" id="scrollToTopBtn" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4l-8 8h6v8h4v-8h6z" />
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Анимация хедера
+            if (document.documentElement.classList.contains('is-animating')) {
+                setTimeout(() => { document.querySelector('.semplice-header')?.classList.add('start-anim'); }, 500);
+            }
+
+            // --- ИСПРАВЛЕННАЯ АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ИЗОБРАЖЕНИЙ ---
+            const playGrid = document.getElementById('playGrid');
+            const imageExtensions = ['jpg', 'png', 'gif', 'webp', 'jpeg'];
+            const maxImagesToCheck = 30; 
+            
+            const tryLoadImage = (number, extIndex = 0) => {
+                if (number > maxImagesToCheck) {
+                    finishAnimation();
+                    return;
+                }
+                if (extIndex >= imageExtensions.length) {
+                    tryLoadImage(number + 1, 0);
+                    return;
+                }
+
+                const ext = imageExtensions[extIndex];
+                const imgPath = `imgs/img_${number}.${ext}`;
+                
+                const tempImg = new Image();
+                
+                tempImg.onload = function() {
+                    createCard(imgPath, number);
+                    tryLoadImage(number + 1, 0);
+                };
+                
+                tempImg.onerror = function() {
+                    tryLoadImage(number, extIndex + 1);
+                };
+                
+                tempImg.src = imgPath;
+            };
+
+            function createCard(src, index) {
+                const playItem = document.createElement('div');
+                playItem.className = 'play-item project-anim-item';
+                
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Creative Work ${index}`;
+                
+                playItem.onclick = function() {
+                   openModal(src);
+                };
+
+                playItem.appendChild(img);
+                playGrid.appendChild(playItem);
+
+                setTimeout(() => {
+                    playItem.classList.add('loaded');
+                    playItem.classList.add('animate-in');
+                }, 100);
+            }
+
+            function finishAnimation() {
+                const contentItems = document.querySelectorAll('.project-anim-item:not(.play-item)');
+                contentItems.forEach((item, index) => setTimeout(() => item.classList.add('animate-in'), 200 + (index * 100)));
+                setTimeout(() => document.querySelector('.footer-section')?.classList.add('animate-in'), 500);
+            }
+
+            tryLoadImage(1);
+
+
+            // --- МОДАЛЬНОЕ ОКНО (ИСПРАВЛЕНО: без блокировки скролла) ---
+            const modal = document.getElementById('imageModal');
+            const modalImg = modal.querySelector('img');
+            const modalClose = document.getElementById('modalClose');
+
+            // Клик по картинке закрывает окно
+            modalImg.onclick = function(e) {
+                e.stopPropagation();
+                closeModal();
+            };
+
+            function openModal(src) {
+                modalImg.src = src;
+                modal.classList.add('active');
+                // УБРАНО: document.body.style.overflow = 'hidden'; <- Это вызывало дерганье
+                // Вместо этого скролл на странице остается, но мы его блокируем визуально или просто оставляем
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                // УБРАНО: document.body.style.overflow = ''; 
+                // Очищаем src с задержкой, чтобы видна была анимация исчезновения
+                setTimeout(() => { modalImg.src = ''; }, 400); 
+            }
+
+            modalClose.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+
+            // --- SCROLL TO TOP ---
+            const btn = document.getElementById('scrollToTopBtn');
+            if (btn) {
+                const checkScroll = () => {
+                    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+                    if (y > 300) {
+                        btn.classList.add('is-visible');
+                    } else {
+                        btn.classList.remove('is-visible');
+                    }
+                };
+
+                window.addEventListener('scroll', checkScroll, { passive: true });
+                checkScroll(); 
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        });
+        function toggleMenu() { document.getElementById('mobileOverlay').classList.toggle('active'); }
+    </script>
+</body>
+</html>
+
